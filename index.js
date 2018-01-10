@@ -31,7 +31,6 @@ app.get('/', function (req, res) {
 app.post('/webhook', (req, res) => {  
  
     let body = req.body;
-    console.log('[DEBUG][post::forEach]', body);
 
     // Checks this is an event from a page subscription
     if (body.object === 'page') {
@@ -49,7 +48,7 @@ app.post('/webhook', (req, res) => {
          // Check if the event is a message or postback and
         // pass the event to the appropriate handler function
         if (webhookEvent.message) {
-          handleMessage(senderPsid, webhookEvent);        
+          handleMessage(senderPsid, webhookEvent.message);        
         } else if (webhookEvent.postback) {
           handlePostback(senderPsid, webhookEvent.postback);
         }
@@ -104,10 +103,8 @@ app.get('/webhook', (req, res) => {
  * @param {*} sender_psid 
  * @param {*} received_message 
  */
-function handleMessage(sender_psid, webhookEvent) {
-  console.log('[DEBUG][handleMessage]', sender_psid, webhookEvent);
-
-  const received_message = webhookEvent.message;
+function handleMessage(sender_psid, received_message) {
+  console.log('[DEBUG][handleMessage]', sender_psid, received_message);
 
   let response;
   // check greeting is here and is confident
@@ -117,10 +114,15 @@ function handleMessage(sender_psid, webhookEvent) {
   console.log('[DEBUG][handleMessage::firstEntity]', greeting, math);
 
   if (greeting && greeting.confidence > 0.8) {
-    sendResponse('Hi there!');
+    sendResponse();
+    response = {
+      "text": `'Hi there! How u're doing?'`
+    }
 
   } else if (math && math.confidence > 0.8) {
-    sendResponse(math.value);
+    response = {
+      "text": math.value
+    }
 
   // Checks if the message contains text
   } else if (received_message.text) {    
