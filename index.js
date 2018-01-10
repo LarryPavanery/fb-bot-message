@@ -6,7 +6,7 @@
  * Hello World from FB: https://developers.facebook.com/docs/messenger-platform/getting-started/quick-start
  * Configure Messenger: https://developers.facebook.com/apps/1613109042076313/messenger/
  * Use NLP: https://developers.facebook.com/docs/messenger-platform/built-in-nlp
- * AI brain: https://wit.ai
+ * AI brain: https://wit.ai | https://wit.ai/larrypavanery/fb-bot-message/entities/math
  * Chat Bots Magazine: https://chatbotsmagazine.com
  */
 
@@ -50,7 +50,7 @@ app.post('/webhook', (req, res) => {
          // Check if the event is a message or postback and
         // pass the event to the appropriate handler function
         if (webhookEvent.message) {
-          handleMessage(senderPsid, webhookEvent.message);        
+          handleMessage(senderPsid, webhookEvent);        
         } else if (webhookEvent.postback) {
           handlePostback(senderPsid, webhookEvent.postback);
         }
@@ -105,14 +105,16 @@ app.get('/webhook', (req, res) => {
  * @param {*} sender_psid 
  * @param {*} received_message 
  */
-function handleMessage(sender_psid, received_message) {
-  console.log('[DEBUG][handleMessage]', sender_psid, received_message);
+function handleMessage(sender_psid, webhookEvent) {
+  console.log('[DEBUG][handleMessage]', sender_psid, webhookEvent);
+
+  const received_message = webhookEvent.message;
 
   let response;
   // check greeting is here and is confident
   const greeting = firstEntity(received_message.nlp, 'greeting');
   const math = firstEntity(received_message.nlp, 'math');
-  
+
   console.log('[DEBUG][handleMessage::firstEntity]', greeting, math);
 
   if (greeting && greeting.confidence > 0.8) {
