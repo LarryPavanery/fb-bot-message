@@ -1,6 +1,14 @@
 'use strict';
 
-//https://developers.facebook.com/docs/messenger-platform/getting-started/quick-start
+/**
+ * @author Larry Pavanery
+ * Configure Webhook: https://developers.facebook.com/docs/messenger-platform/getting-started/webhook-setup
+ * Hello World from FB: https://developers.facebook.com/docs/messenger-platform/getting-started/quick-start
+ * Configure Messenger: https://developers.facebook.com/apps/1613109042076313/messenger/
+ * Use NLP: https://developers.facebook.com/docs/messenger-platform/built-in-nlp
+ * AI brain: https://wit.ai
+ * Chat Bots Magazine: https://chatbotsmagazine.com
+ */
 
 // Imports dependencies and set up http server
 const 
@@ -85,11 +93,37 @@ app.get('/webhook', (req, res) => {
     }
   });
 
+
 // Handles messages events
+/**
+ * - confidence é um valor entre 0 e 1 que indica a probabilidade do 
+ * analisador achar que seu reconhecimento está correto.
+ * - value é o resultado do analisador. Por exemplo, 2pm pode ser 
+ * convertido em uma cadeia de caracteres ISO que pode ser usada no 
+ * seu bot, como "2017-05-10T14:00:00.000-07:00".
+ * See more: https://developers.facebook.com/docs/messenger-platform/built-in-nlp
+ * @param {*} sender_psid 
+ * @param {*} received_message 
+ */
 function handleMessage(sender_psid, received_message) {
+  console.log('[DEBUG][handleMessage]', sender_psid, received_message);
+
   let response;
+  // check greeting is here and is confident
+  const greeting = firstEntity(received_message.nlp, 'greeting');
+  const math = firstEntity(received_message.nlp, 'math');
+  
+  console.log('[DEBUG][handleMessage::firstEntity]', greeting, math);
+
+  if (greeting && greeting.confidence > 0.8) {
+    sendResponse('Hi there!');
+
+  } else if (math && math.confidence > 0.8) {
+    sendResponse(math.value);
+
   // Checks if the message contains text
-  if (received_message.text) {    
+  } else if (received_message.text) {    
+    
     // Create the payload for a basic text message, which
     // will be added to the body of our request to the Send API
     response = {
@@ -167,4 +201,8 @@ function callSendAPI(sender_psid, response) {
       console.error("Unable to send message:" + err);
     }
   }); 
+}
+
+function firstEntity(nlp, name) {
+  return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
 }
