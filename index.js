@@ -108,13 +108,12 @@ function handleMessage(sender_psid, received_message) {
 
   let response;
   // check greeting is here and is confident
-  const greeting = firstEntity(received_message.nlp, 'greeting');
+  const greeting = firstEntity(received_message.nlp, 'mygreetings');
   const math = firstEntity(received_message.nlp, 'math');
 
   console.log('[DEBUG][handleMessage::firstEntity]', greeting, math);
 
   if (greeting && greeting.confidence > 0.8) {
-    sendResponse();
     response = {
       "text": `'Hi there! How u're doing?'`
     }
