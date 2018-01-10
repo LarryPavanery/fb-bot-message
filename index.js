@@ -115,7 +115,7 @@ function handleMessage(sender_psid, received_message) {
 
   if (greeting && greeting.confidence > 0.8) {
     response = {
-      "text": `'Hi there! How u're doing?'`
+      "text": `Hi there! How u're doing?`
     }
 
   } else if (math && math.confidence > 0.8) {
