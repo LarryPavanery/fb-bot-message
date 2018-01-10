@@ -6,6 +6,7 @@
 const 
   express = require('express'),
   bodyParser = require('body-parser'),
+  request = require('request'),
   app = express().use(bodyParser.json()); // creates express http server
 
 const PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN
